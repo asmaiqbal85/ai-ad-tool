@@ -1,4 +1,10 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+if (!API_URL) {
+  throw new Error(
+    "NEXT_PUBLIC_API_URL is not set. Add it to .env.local or your Vercel environment variables."
+  );
+}
 
 export async function createAd(data: {
   url: string;
