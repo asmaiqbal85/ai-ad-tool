@@ -46,6 +46,25 @@ export async function updateAd(
   return res.json();
 }
 
+export async function rerenderAd(
+  id: string,
+  data: {
+    headline: string;
+    ad_copy: string;
+    colors?: string[];
+    logo?: string;
+    images?: string[];
+  }
+) {
+  const res = await fetch(`${API_URL}/api/ads/${id}/rerender`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Failed to re-render ad");
+  return res.json();
+}
+
 export async function scrapeUrl(url: string) {
   const res = await fetch(`${API_URL}/api/scrape`, {
     method: "POST",

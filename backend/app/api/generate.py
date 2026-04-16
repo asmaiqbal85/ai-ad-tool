@@ -41,6 +41,9 @@ async def generate_ad(payload: GenerateAdRequest):
                 "headline": headline,
                 "ad_copy": ad_copy,
                 "video_url": video_url,
+                "colors": payload.colors,
+                "logo": payload.logo,
+                "images": payload.images,
             })
             .execute()
         )

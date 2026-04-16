@@ -33,8 +33,7 @@ PUT  /api/ads/{id}      → update ad (editor saves here)
 CF_API_TOKEN              → Cloudflare Browser Rendering token
 CF_ACCOUNT_ID             → Cloudflare account ID
 OPENAI_API_KEY            → ad copy generation
-CREATOMATE_API_KEY        → video rendering
-CREATOMATE_TEMPLATE_ID    → Creatomate video template ID
+
 SUPABASE_URL              → database
 SUPABASE_KEY              → Supabase anon key (used by backend)
 
