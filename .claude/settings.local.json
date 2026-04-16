@@ -2,7 +2,18 @@
   "permissions": {
     "allow": [
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(uvicorn main:app --reload --port 8000)",
+      "Bash(npm run *)",
+      "Bash(python -m uvicorn main:app --reload --port 8000)",
+      "Bash(py -V)",
+      "Bash(py -3 -V)",
+      "Bash(py -m uvicorn --version)",
+      "Bash(py -m uvicorn main:app --reload --port 8000)",
+      "Bash(kill %1)",
+      "Bash(py -m uvicorn app.main:app --reload --port 8000)",
+      "Bash(curl *)",
+      "Bash(py *)"
     ]
   }
 }
