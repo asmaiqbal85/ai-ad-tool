@@ -21,8 +21,13 @@ export async function createAd(data: {
   return res.json();
 }
 
-export async function getAds() {
-  const res = await fetch(`${API_URL}/api/ads`, { cache: "no-store" });
+export async function getAds(accessToken?: string) {
+  const headers: Record<string, string> = {};
+  if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
+  const res = await fetch(`${API_URL}/api/ads`, {
+    cache: "no-store",
+    headers,
+  });
   if (!res.ok) throw new Error("Failed to fetch ads");
   return res.json();
 }
