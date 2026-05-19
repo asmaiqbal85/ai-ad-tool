@@ -1,84 +1,303 @@
-# AI Ad Creation Tool — CLAUDE.md
+# RunAds.io — Pakistan's AI-Powered Self-Serve Ad Platform
 # Read this FULLY before writing any code.
 
-## Project Overview
-Tool: AI-powered ad generator
-Goal: URL → scrape → AI copy → video ad → edit → download
-Stack: Next.js (frontend) + FastAPI (backend) + Supabase (DB)
-Deploy: Vercel (demo) → Oracle Cloud Infrastructure (production)
+## Vision
+RunAds.io is Pakistan's first AI-powered 
+self-serve advertising platform. Businesses 
+paste their URL, AI creates a professional 
+video ad, and the platform runs it on 
+Facebook/Instagram with precise targeting.
+Business owners save Rs 25,000-1,00,000/month
+they currently pay to human ad managers.
 
-## Folder Structure
-/frontend        → Next.js app (port 3000)
+## Tagline
+"Create. Target. Run. Repeat."
+
+## Target Market
+- Primary: Pakistani small-medium businesses
+- Secondary: International businesses (future)
+- Examples: Restaurants, clothing brands, 
+  real estate, education, e-commerce
+
+## Business Model
+1. Free trial — 3 ads, no credit card needed
+2. Subscription — Rs 5,000-40,000/month
+3. Agency — managed service for big clients
+4. White label — sell platform to others
+
+---
+
+## Project Structure
+/frontend        → Next.js 14 app (port 3000)
 /backend         → FastAPI app (port 8000)
-/backend/main.py → All API endpoints here
+/backend/app/main.py    → app entry point
+/backend/app/api/       → all route files
+/backend/app/services/  → business logic
+/backend/app/schemas/   → pydantic models
 
-## Key API Endpoints
-POST /api/scrape        → input: {url} → output: business JSON
-POST /api/generate-ad   → input: business JSON → output: {video_url, headline, ad_copy, id}
-GET  /api/ads           → list all saved ads
-GET  /api/ads/{id}      → get single ad
-PUT  /api/ads/{id}      → update ad (editor saves here)
+## Current API Endpoints
+POST /api/scrape              → {url} → business JSON
+POST /api/generate-ad         → business JSON → {video_url, headline, ad_copy, id}
+GET  /api/ads                 → list all ads (filtered by user_id when auth added)
+GET  /api/ads/{id}            → get single ad
+PUT  /api/ads/{id}            → update ad text fields
+POST /api/ads/{id}/rerender   → re-render video with edited values
+GET  /health                  → {"status":"ok"}
 
-## ⚠️ SECURITY — YOU MUST FOLLOW THESE
+---
+
+## What Is Already Built — DO NOT BREAK
+Live URL: https://ai-ad-tool.vercel.app
+A client named Jamal has access — NEVER break it.
+Git repo: github.com/asmaiqbal85/ai-ad-tool
+
+Working features:
+- URL scraping via Cloudflare Browser Rendering
+- AI copywriting via OpenAI GPT-4o-mini
+- Creatomate video generation with polling
+- Video re-render after edit
+- Real blob download (not window.open)
+- Supabase database with RLS (4 policies)
+- Vercel frontend connected to OCI backend
+- Permanent Cloudflare tunnel on OCI
+- All 5 priority bugs fixed and tested
+- Polished UI on all 4 pages
+
+Dead code to delete when possible:
+- backend/app/services/ai.py (unused)
+
+---
+
+## Tech Stack
+
+Frontend:
+- Next.js 14 (App Router)
+- Tailwind CSS
+- TypeScript
+- Deployed on Vercel
+
+Backend:
+- FastAPI (Python)
+- Deployed on Oracle OCI VM (Ubuntu 22.04)
+- Running via Docker container
+- Public IP: 129.80.37.199
+- Cloudflare tunnel: permanent systemd service
+
+Database:
+- Supabase (PostgreSQL)
+- RLS enabled with 4 policies
+- Project: sjprvzyyiuqvtwrobbfz.supabase.co
+
+Current APIs:
+- Cloudflare Browser Rendering (scraping)
+- OpenAI GPT-4o-mini (copywriting)
+- Creatomate (video generation)
+
+Future APIs (do not add without asking):
+- Meta Ads API (Facebook/Instagram)
+- Google Ads API (YouTube)
+- Stripe (international payments)
+- JazzCash/EasyPaisa (Pakistan payments)
+- OpenAI Agents SDK (AI optimization)
+- OpenAI TTS (voiceover)
+
+---
+
+## Creatomate Template
+Account: new account (50 fresh credits)
+Template ID: ea8207ba-9e84-40ce-9d98-41f985ed4c66
+Template: Content Promotion 16:9 Landscape
+Element names — EXACT, do not change:
+- Title        → headline
+- Text-1       → ad_copy
+- Text-2       → "" (empty string)
+- Logo         → logo URL from scrape
+- Background   → first image URL from scrape
+
+---
+
+## Environment Variables
+
+Frontend (.env.local):
+NEXT_PUBLIC_API_URL=https://for-foot-existed-super.trycloudflare.com
+
+Backend (.env on OCI at ~/ai-ad-tool/backend/):
+SUPABASE_URL=
+SUPABASE_KEY=
+OPENAI_API_KEY=
+CF_ACCOUNT_ID=
+CF_API_TOKEN=
+CREATOMATE_API_KEY=
+CREATOMATE_TEMPLATE_ID=ea8207ba-9e84-40ce-9d98-41f985ed4c66
+ALLOWED_ORIGINS=https://ai-ad-tool.vercel.app
+
+---
+
+## Build Phases — In This Exact Order
+Never skip phases. Never build phase 2 before phase 1 is done.
+
+### PHASE 1 — Foundation (Current Sprint)
+
+Step 1: Rebrand (1 day)
+- Change all "AI Ad Tool" to "RunAds.io"
+- Update page titles, nav, footer, meta tags
+- Keep all functionality exactly the same
+- Commit: "rebrand: AI Ad Tool to RunAds.io"
+
+Step 2: User Authentication (3-4 days)
+- Supabase Auth (email + password)
+- /auth/signup page
+- /auth/login page
+- Protected routes (redirect if not logged in)
+- Add user_id column to ads table
+- Each user sees only their own ads
+- Update all API endpoints to filter by user_id
+- Logout button in navbar
+- Commit: "feat: add user authentication"
+
+Step 3: Better Videos + Voiceover (4-5 days)
+- 3 Creatomate template options for user to pick
+- Template picker UI shown before generation
+- OpenAI TTS for AI voiceover from ad copy
+- 3 voice options: male, female, energetic
+- Audio player in editor page
+- Commit: "feat: multiple templates and voiceover"
+
+Step 4: Payments (3-4 days)
+- Stripe for international customers
+- Free tier: 3 ads/month no credit card
+- Pro tier: unlimited ads + ad distribution
+- Payment wall after free tier used
+- Commit: "feat: stripe payments and subscriptions"
+
+### PHASE 2 — Ad Distribution
+
+Step 5: Meta Ads API (2-3 weeks)
+- User connects their Facebook page
+- Create ad campaigns via Meta API
+- Location targeting (city level Pakistan)
+- Audience targeting (age, gender, interests)
+- Daily budget management
+- Campaign status and pause/resume
+
+Step 6: Campaign Dashboard (1 week)
+- Impressions, clicks, spend shown
+- Simple graphs anyone understands
+- Campaign performance alerts
+- Money spent vs remaining budget
+
+### PHASE 3 — Scale
+
+Step 7: YouTube Ads API
+Step 8: JazzCash and EasyPaisa payments
+Step 9: OpenAI Agents SDK
+  - AI agent to auto-optimize campaigns
+  - Suggest better ad copy
+  - Predict best audiences
+  - Auto-adjust budgets based on performance
+Step 10: TV Streaming (CTV) for international
+Step 11: Arabic and Gulf market expansion
+Step 12: White label system for resellers
+
+---
+
+## Deployment Process
+
+### Frontend (Vercel — automatic)
+git add .
+git commit -m "your message"
+git push
+Vercel auto deploys in ~35 seconds.
+Check: https://ai-ad-tool.vercel.app
+
+### Backend (OCI — manual steps)
+Step 1: SSH into OCI:
+ssh -i "D:\projects\ads\ssh-keys\ssh-key-2026-04-07.key" ubuntu@129.80.37.199
+
+Step 2: Pull latest code:
+cd ~/ai-ad-tool
+git pull
+
+Step 3: Rebuild and restart Docker:
+cd backend
+docker stop ai-ad-tool
+docker rm ai-ad-tool
+docker build -t ai-ad-tool-backend .
+docker run -d --name ai-ad-tool \
+  --restart unless-stopped \
+  --env-file .env \
+  -p 8000:8000 \
+  ai-ad-tool-backend
+
+Step 4: Verify running:
+docker ps
+curl http://localhost:8000/health
+
+Step 5: Check tunnel:
+sudo systemctl status cloudflared
+
+---
+
+## Security Rules — NEVER VIOLATE
 - NEVER hardcode API keys anywhere in code
 - ALWAYS use environment variables via os.getenv()
 - NEVER commit .env file — it is in .gitignore
 - NEVER log API keys or tokens to console
-- ALWAYS validate and sanitize URL input before scraping
+- ALWAYS validate and sanitize URL input
 - ALWAYS use HTTPS URLs only for scraping
-- Rate limit: max 10 requests/minute per IP (already configured)
-- Supabase: use anon key on frontend, service key on backend ONLY
+- Rate limit: max 10 requests/minute per IP
+- Supabase: anon key frontend only
+         service key backend only NEVER frontend
 
-## Environment Variables Required
-CF_API_TOKEN              → Cloudflare Browser Rendering token
-CF_ACCOUNT_ID             → Cloudflare account ID
-OPENAI_API_KEY            → ad copy generation
-
-SUPABASE_URL              → database
-SUPABASE_KEY              → Supabase anon key (used by backend)
+---
 
 ## Code Style Rules
-- Python: use async/await in FastAPI, type hints always
-- JavaScript: use ES modules (import/export), no require()
-- Always destructure imports: import { useState } from 'react'
-- No console.log in production code — use proper logging
-- Handle all errors — never leave bare except: pass
+Python:
+- Use async/await in all FastAPI routes
+- Type hints always on all functions
+- Never leave bare except: pass
+- Handle all errors with HTTPException
 
-## Commands to Run
-# Backend
-cd backend && pip install -r requirements.txt
-uvicorn main:app --reload --port 8000
+JavaScript/TypeScript:
+- ES modules only (import/export)
+- Never use require()
+- Always destructure imports
+- No console.log in production code
+- Always handle promise rejections
 
-# Frontend
-cd frontend && npm install
-npm run dev
+---
 
-# Test backend
-curl -X POST http://localhost:8000/api/scrape \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://stripe.com"}'
+## Golden Rules For Claude Code
+1. NEVER break the live app at any time
+2. NEVER touch working backend services
+3. ALWAYS show plan before writing any code
+4. ALWAYS do one step at a time
+5. ALWAYS commit to git after each step
+6. ALWAYS tell user exactly what to test
+7. NEVER install new packages without asking
+8. NEVER change environment variable names
+9. NEVER rewrite working code — only add
+10. ALWAYS handle errors with friendly messages
+11. NEVER change database schema without asking
+12. NEVER switch API providers without asking
 
-## What This Tool Does (2 features ONLY)
-1. Generate ad from URL → /api/scrape → /api/generate-ad
-2. Edit that ad → PUT /api/ads/{id} → frontend editor
+---
 
-## IMPORTANT RULES — DO NOT VIOLATE
-- MVP only — do NOT add features not listed above
-- Do NOT change the database schema without asking
-- Do NOT switch API providers without asking
-- When fixing bugs: fix only what is broken, nothing else
-- Always test the endpoint after any backend change
-- Always check .env.example is updated when adding new vars
+## Known Issues To Fix Later
+- Cloudflare tunnel URL changes on server restart
+  → needs permanent named tunnel with real domain
+- Supabase pauses after 7 days of inactivity
+  → upgrade to Pro after first paying customers
+- Creatomate free trial only 50 renders
+  → upgrade when revenue starts coming in
+- backend/app/services/ai.py is dead code
+  → delete on next cleanup pass
 
-## Oracle Cloud Deployment Notes
-- Backend: OCI Compute Instance (Ubuntu 22.04)
-- Frontend: Vercel (connected to GitHub)
-- Storage: OCI Object Storage for video files (future)
-- Use Nginx as reverse proxy for FastAPI
-- SSL via Let's Encrypt (certbot)
+---
 
-## When Compacting Context — Preserve
-- Current endpoint being worked on
-- List of modified files
+## When Compacting Context — Always Preserve
+- Current phase and step being worked on
+- List of files modified in this session
 - Any pending bugs or TODOs
-- Current test status
+- Current test status (what passed, what failed)
+- Last commit message
