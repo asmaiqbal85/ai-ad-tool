@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.schemas.generate import GenerateAdRequest, GenerateAdResponse
+from app.services.auth import get_current_user
 from app.services.copywriter import generate_ad_copy
 from app.services.creatomate import create_video_ad
 from app.services.supabase import get_supabase
@@ -9,7 +10,7 @@ router = APIRouter()
 
 
 @router.post("", response_model=GenerateAdResponse)
-async def generate_ad(payload: GenerateAdRequest):
+async def generate_ad(payload: GenerateAdRequest, user=Depends(get_current_user)):
     # Step 1: Generate headline + ad copy via OpenAI
     try:
         copy = await generate_ad_copy(payload.model_dump())
@@ -31,7 +32,7 @@ async def generate_ad(payload: GenerateAdRequest):
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"Video rendering failed: {e}")
 
-    # Step 3: Auto-save to Supabase
+    # Step 3: Auto-save to Supabase, stamping the owner.
     try:
         db = get_supabase()
         result = (
@@ -44,6 +45,7 @@ async def generate_ad(payload: GenerateAdRequest):
                 "colors": payload.colors,
                 "logo": payload.logo,
                 "images": payload.images,
+                "user_id": user.id,
             })
             .execute()
         )

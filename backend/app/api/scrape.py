@@ -1,13 +1,14 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.schemas.scrape import ScrapeRequest, ScrapeResponse
+from app.services.auth import get_current_user
 from app.services.browser import render_page, extract_business_data
 
 router = APIRouter()
 
 
 @router.post("", response_model=ScrapeResponse)
-async def scrape(payload: ScrapeRequest):
+async def scrape(payload: ScrapeRequest, user=Depends(get_current_user)):
     url = str(payload.url)
     try:
         html = await render_page(url)
