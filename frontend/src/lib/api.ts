@@ -1,3 +1,5 @@
+import { createClient } from "@/lib/supabase/client";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 if (!API_URL) {
@@ -6,34 +8,44 @@ if (!API_URL) {
   );
 }
 
-export async function createAd(data: {
-  url: string;
-  headline: string;
-  ad_copy: string;
-  video_url?: string;
-}) {
-  const res = await fetch(`${API_URL}/api/ads`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) throw new Error("Failed to create ad");
-  return res.json();
+async function resolveToken(explicitToken?: string): Promise<string> {
+  if (explicitToken) return explicitToken;
+  const supabase = createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session?.access_token) {
+    throw new Error("Not signed in");
+  }
+  return session.access_token;
+}
+
+async function authedFetch(
+  path: string,
+  init: RequestInit = {},
+  explicitToken?: string
+): Promise<Response> {
+  const token = await resolveToken(explicitToken);
+  const headers = new Headers(init.headers);
+  headers.set("Authorization", `Bearer ${token}`);
+  if (init.body && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+  return fetch(`${API_URL}${path}`, { ...init, headers });
 }
 
 export async function getAds(accessToken?: string) {
-  const headers: Record<string, string> = {};
-  if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
-  const res = await fetch(`${API_URL}/api/ads`, {
-    cache: "no-store",
-    headers,
-  });
+  const res = await authedFetch(
+    "/api/ads",
+    { cache: "no-store" },
+    accessToken
+  );
   if (!res.ok) throw new Error("Failed to fetch ads");
   return res.json();
 }
 
 export async function getAd(id: string) {
-  const res = await fetch(`${API_URL}/api/ads/${id}`, { cache: "no-store" });
+  const res = await authedFetch(`/api/ads/${id}`, { cache: "no-store" });
   if (!res.ok) throw new Error("Failed to fetch ad");
   return res.json();
 }
@@ -42,9 +54,8 @@ export async function updateAd(
   id: string,
   data: { headline?: string; ad_copy?: string; video_url?: string }
 ) {
-  const res = await fetch(`${API_URL}/api/ads/${id}`, {
+  const res = await authedFetch(`/api/ads/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error("Failed to update ad");
@@ -61,9 +72,8 @@ export async function rerenderAd(
     images?: string[];
   }
 ) {
-  const res = await fetch(`${API_URL}/api/ads/${id}/rerender`, {
+  const res = await authedFetch(`/api/ads/${id}/rerender`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error("Failed to re-render ad");
@@ -71,9 +81,8 @@ export async function rerenderAd(
 }
 
 export async function scrapeUrl(url: string) {
-  const res = await fetch(`${API_URL}/api/scrape`, {
+  const res = await authedFetch("/api/scrape", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ url }),
   });
   if (!res.ok) throw new Error("Failed to scrape URL");
@@ -88,9 +97,8 @@ export async function generateAd(scraped: {
   colors: string[];
   images: string[];
 }) {
-  const res = await fetch(`${API_URL}/api/generate-ad`, {
+  const res = await authedFetch("/api/generate-ad", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(scraped),
   });
   if (!res.ok) throw new Error("Failed to generate ad");
