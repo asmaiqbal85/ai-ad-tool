@@ -14,7 +14,13 @@
       "Bash(py -m uvicorn app.main:app --reload --port 8000)",
       "Bash(curl *)",
       "Bash(py *)",
-      "Bash(ls *)"
+      "Bash(ls *)",
+      "Bash(git push *)",
+      "Bash(python -c \"import ast; ast.parse\\(open\\('app/services/creatomate.py'\\).read\\(\\)\\); print\\('syntax ok'\\)\")",
+      "Bash(where python *)",
+      "Bash(where python3 *)",
+      "Bash(where py *)",
+      "PowerShell(Get-Command *)"
     ]
   }
 }
