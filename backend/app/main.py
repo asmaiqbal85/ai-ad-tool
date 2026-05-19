@@ -10,7 +10,7 @@ from app.api.ads import router as ads_router
 from app.api.scrape import router as scrape_router
 from app.api.generate import router as generate_router
 
-app = FastAPI(title="AI Ad Tool API")
+app = FastAPI(title="RunAds.io API")
 
 _origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
 
