@@ -62,8 +62,15 @@ async def create_video_ad(
     logo: str,
     colors: list[str],
     images: list[str],
+    voiceover_url: str | None = None,
 ) -> str:
-    """Call Creatomate API to render a video ad. Returns the video URL."""
+    """Call Creatomate API to render a video ad. Returns the video URL.
+
+    `voiceover_url` is an optional MP3 URL — when provided, it overrides
+    the template's `Voiceover` audio element. If the template does not
+    expose that element, Creatomate silently ignores it and renders silent
+    video, so this is safe to pass even before the template is updated.
+    """
     # Background: real scraped image if available; otherwise a solid dark color
     # delivered as a placehold.co PNG (Creatomate's Background element expects
     # an image URL, so we can't send a hex code directly).
@@ -91,6 +98,9 @@ async def create_video_ad(
         "Title.fill_color": title_color,
         "Text-1.fill_color": text_color,
     }
+
+    if voiceover_url:
+        modifications["Voiceover"] = voiceover_url
 
     payload = {
         "template_id": os.getenv(
