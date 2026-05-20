@@ -90,6 +90,31 @@ export async function scrapeUrl(url: string) {
   return res.json();
 }
 
+export async function getBillingMe() {
+  const res = await authedFetch("/api/billing/me", { cache: "no-store" });
+  if (!res.ok) throw new Error("Failed to load billing info");
+  return res.json() as Promise<{
+    plan: "free" | "pro";
+    subscription_status: string | null;
+    current_period_end: string | null;
+    has_stripe_customer: boolean;
+    ads_used: number;
+    free_limit: number;
+  }>;
+}
+
+export async function createCheckoutSession() {
+  const res = await authedFetch("/api/billing/checkout", { method: "POST" });
+  if (!res.ok) throw new Error("Failed to start checkout");
+  return res.json() as Promise<{ url: string }>;
+}
+
+export async function createPortalSession() {
+  const res = await authedFetch("/api/billing/portal", { method: "POST" });
+  if (!res.ok) throw new Error("Failed to open billing portal");
+  return res.json() as Promise<{ url: string }>;
+}
+
 export async function generateAd(scraped: {
   url?: string;
   business_name: string;
