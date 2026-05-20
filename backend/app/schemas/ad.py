@@ -1,5 +1,7 @@
-from pydantic import BaseModel, HttpUrl
 from datetime import datetime
+from typing import Literal
+
+from pydantic import BaseModel, HttpUrl
 
 
 class AdCreate(BaseModel):
@@ -21,6 +23,7 @@ class AdRerenderRequest(BaseModel):
     colors: list[str] = []
     logo: str = ""
     images: list[str] = []
+    voice: Literal["alloy", "nova", "shimmer"] = "alloy"
 
 
 class AdResponse(BaseModel):
@@ -32,4 +35,6 @@ class AdResponse(BaseModel):
     colors: list[str] = []
     logo: str = ""
     images: list[str] = []
+    template_id: str | None = None
+    voiceover_url: str | None = None
     created_at: datetime

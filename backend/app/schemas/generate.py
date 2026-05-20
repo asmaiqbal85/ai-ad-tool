@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel
 
 
@@ -8,6 +10,7 @@ class GenerateAdRequest(BaseModel):
     logo: str
     colors: list[str]
     images: list[str]
+    voice: Literal["alloy", "nova", "shimmer"] = "alloy"
 
 
 class GenerateAdResponse(BaseModel):

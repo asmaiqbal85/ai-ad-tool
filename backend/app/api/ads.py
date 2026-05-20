@@ -1,9 +1,13 @@
+import os
+
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.schemas.ad import AdCreate, AdUpdate, AdRerenderRequest, AdResponse
 from app.services.auth import get_current_user
 from app.services.creatomate import create_video_ad
+from app.services.storage import upload_voiceover
 from app.services.supabase import get_supabase
+from app.services.tts import synthesize
 
 router = APIRouter()
 
@@ -91,6 +95,13 @@ async def rerender_ad(
     if not existing.data:
         raise HTTPException(status_code=404, detail="Ad not found")
 
+    # Generate fresh voiceover for the (possibly edited) ad copy first.
+    try:
+        mp3 = await synthesize(payload.ad_copy, payload.voice)
+        voiceover_url = await upload_voiceover(ad_id, mp3)
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Voiceover generation failed: {e}")
+
     try:
         video_url = await create_video_ad(
             headline=payload.headline,
@@ -98,10 +109,12 @@ async def rerender_ad(
             logo=payload.logo,
             colors=payload.colors,
             images=payload.images,
+            voiceover_url=voiceover_url,
         )
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"Video re-rendering failed: {e}")
 
+    template_id = os.getenv("CREATOMATE_TEMPLATE_ID", "")
     try:
         result = (
             db.table("ads")
@@ -112,6 +125,8 @@ async def rerender_ad(
                 "colors": payload.colors,
                 "logo": payload.logo,
                 "images": payload.images,
+                "template_id": template_id,
+                "voiceover_url": voiceover_url,
             })
             .eq("id", ad_id)
             .eq("user_id", user.id)
