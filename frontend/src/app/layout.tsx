@@ -8,7 +8,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "RunAds.io — Create. Target. Run. Repeat.",
   description:
-    "Pakistan's AI-powered self-serve ad platform. Paste a URL, get a video ad, run it on Facebook & Instagram.",
+    "Your AI marketing employee. Paste a URL, get a video ad in 60 seconds, run it on Facebook & Instagram. Free trial, $49/month.",
 };
 
 export default async function RootLayout({

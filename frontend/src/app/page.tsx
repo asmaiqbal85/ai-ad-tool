@@ -25,7 +25,7 @@ export default function Landing() {
       <section className="relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-indigo-50 via-white to-violet-50 px-8 py-20 text-center">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.12),transparent_60%)]" />
         <span className="inline-block rounded-full border border-indigo-200 bg-white/70 px-3 py-1 text-xs font-medium uppercase tracking-wider text-indigo-700 backdrop-blur">
-          Pakistan&apos;s AI-Powered Ad Platform
+          Your AI Marketing Employee
         </span>
         <h1 className="mt-6 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl md:text-6xl">
           Create. Target. Run.
@@ -35,8 +35,9 @@ export default function Landing() {
           </span>
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-base text-slate-600 sm:text-lg">
-          Paste a URL. Our AI writes the ad and renders a video. Run it on
-          Facebook and Instagram — without paying an agency Rs 25,000 a month.
+          The AI marketing employee that never sleeps, never takes salary,
+          and never misses a deadline. Paste a URL — our AI writes the ad,
+          renders the video, and gets it ready to run on Facebook &amp; Instagram.
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
@@ -54,7 +55,7 @@ export default function Landing() {
           </Link>
         </div>
         <p className="mt-4 text-xs text-slate-500">
-          3 ads free · No credit card required
+          3 ads free · No credit card · Pro $49/month
         </p>
       </section>
 
@@ -89,10 +90,10 @@ export default function Landing() {
       {/* Final CTA */}
       <section className="rounded-3xl border border-slate-200 bg-slate-900 px-8 py-16 text-center text-white">
         <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          Ready to run your first ad?
+          Ready to put your AI marketing employee to work?
         </h2>
         <p className="mt-3 text-base text-slate-300">
-          Sign up and create your first ad in under 60 seconds.
+          Sign up free, ship your first ad in under 60 seconds.
         </p>
         <Link
           href="/auth/signup"
