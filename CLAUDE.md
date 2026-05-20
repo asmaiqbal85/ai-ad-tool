@@ -46,9 +46,10 @@ orchestration layer using OpenAI Agents SDK.
 - User authentication + tenant isolation ✅
 - Founder onboarding + SQL backfill ✅
 - Single template + OpenAI TTS voiceover ✅
-- Payments / Stripe (NEXT)
+- Stripe Checkout + Pro tier + webhook ✅ (test mode)
+- Meta Ads API integration (NEXT)
 - Multi-template picker (deferred)
-- Meta Ads API integration
+- Live-mode Stripe — needs supported-country biz (deferred)
 - Agent orchestration architecture
 - Queue and workflow infrastructure
 - Business memory layer for AI learning
