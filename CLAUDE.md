@@ -2,13 +2,54 @@
 # Read this FULLY before writing any code.
 
 ## Vision
-RunAds.io is Pakistan's first AI-powered 
-self-serve advertising platform. Businesses 
-paste their URL, AI creates a professional 
-video ad, and the platform runs it on 
-Facebook/Instagram with precise targeting.
-Business owners save Rs 25,000-1,00,000/month
-they currently pay to human ad managers.
+RunAds.io is an AI-powered marketing platform 
+designed to become the "AI marketing employee" 
+for small and medium businesses. The platform 
+allows businesses to paste their website URL, 
+after which AI agents automatically understand 
+the business, generate professional video ads, 
+write marketing copy, create campaign strategies, 
+and eventually launch and optimize ads across 
+platforms like Facebook and Instagram.
+
+The long-term vision is to build marketing 
+infrastructure for SMBs — a system that 
+continuously learns from business data, ad 
+performance, customer behavior, and local 
+market trends to automate business growth 
+at scale.
+
+The platform is being built in phases:
+Phase 1: AI self-serve ad generation SaaS
+Phase 2: AI agent-based marketing platform
+Phase 3: Fully autonomous AI marketing employee
+
+## Core AI Architecture Vision
+RunAds.io is evolving from a simple automation 
+pipeline into a multi-agent AI marketing system.
+
+Planned specialized AI agents:
+- Website Intelligence Agent
+- Creative Strategy Agent
+- Copywriting Agent
+- Video Storyboard Agent
+- Audience Targeting Agent
+- Campaign Optimization Agent
+
+These agents will work under a central 
+orchestration layer using OpenAI Agents SDK.
+
+## Current Status
+- URL → AI video ad generation working ✅
+- Ad editor with re-render ✅
+- Professional landing page live ✅
+- Signup/Login UI completed ✅
+- Founder onboarding + SQL backfill (NEXT)
+- Meta Ads API integration
+- Payment system integration
+- Agent orchestration architecture
+- Queue and workflow infrastructure
+- Business memory layer for AI learning
 
 ## Tagline
 "Create. Target. Run. Repeat."
@@ -69,29 +110,29 @@ Dead code to delete when possible:
 ---
 
 ## Tech Stack
+Frontend: Next.js 14 + TypeScript + Tailwind CSS
+Backend API: FastAPI
+Database: Supabase (PostgreSQL + pgvector planned)
+Authentication: Supabase Auth
+AI Models: OpenAI GPT-4o-mini
+AI Agent System: OpenAI Agents SDK (planned)
+Video Generation: Creatomate API
+Web Scraping: Cloudflare Browser Rendering
+Queue/Workflow (planned): Redis + Temporal/DBOS
+Hosting Frontend: Vercel
+Hosting Backend: Oracle OCI Docker Container
+Networking: Cloudflare Tunnel
+Payments (planned): Stripe
+Future Integrations: Meta Ads API
 
-Frontend:
-- Next.js 14 (App Router)
-- Tailwind CSS
-- TypeScript
-- Deployed on Vercel
-
-Backend:
-- FastAPI (Python)
-- Deployed on Oracle OCI VM (Ubuntu 22.04)
-- Running via Docker container
-- Public IP: 129.80.37.199
+Backend infrastructure details:
+- OCI VM: Ubuntu 22.04, public IP 129.80.37.199
+- Docker container with --restart unless-stopped
 - Cloudflare tunnel: permanent systemd service
 
-Database:
-- Supabase (PostgreSQL)
-- RLS enabled with 4 policies
-- Project: sjprvzyyiuqvtwrobbfz.supabase.co
-
-Current APIs:
-- Cloudflare Browser Rendering (scraping)
-- OpenAI GPT-4o-mini (copywriting)
-- Creatomate (video generation)
+Database details:
+- Supabase project: sjprvzyyiuqvtwrobbfz.supabase.co
+- RLS enabled (policies scoped by auth.uid())
 
 Future APIs (do not add without asking):
 - Meta Ads API (Facebook/Instagram)
