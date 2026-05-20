@@ -45,9 +45,10 @@ orchestration layer using OpenAI Agents SDK.
 - Professional landing page live ✅
 - User authentication + tenant isolation ✅
 - Founder onboarding + SQL backfill ✅
-- Multi-template + voiceover (NEXT)
+- Single template + OpenAI TTS voiceover ✅
+- Payments / Stripe (NEXT)
+- Multi-template picker (deferred)
 - Meta Ads API integration
-- Payment system integration
 - Agent orchestration architecture
 - Queue and workflow infrastructure
 - Business memory layer for AI learning
