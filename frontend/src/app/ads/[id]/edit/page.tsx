@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { getAd, rerenderAd } from "@/lib/api";
+import VoicePicker, { type Voice } from "@/components/VoicePicker";
 
 export default function EditAdPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const [ad, setAd] = useState<any>(null);
+  const [voice, setVoice] = useState<Voice>("alloy");
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
   const [error, setError] = useState("");
@@ -30,8 +32,9 @@ export default function EditAdPage() {
         colors: ad.colors ?? [],
         logo: ad.logo ?? "",
         images: ad.images ?? [],
+        voice,
       });
-      setAd({ ...ad, video_url: updated.video_url });
+      setAd({ ...ad, video_url: updated.video_url, voiceover_url: updated.voiceover_url });
       setSaveMsg("Saved & video updated!");
     } catch {
       setError("Could not re-render video. Please try again.");
@@ -128,6 +131,8 @@ export default function EditAdPage() {
                   className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 />
               </div>
+
+              <VoicePicker value={voice} onChange={setVoice} disabled={saving} />
 
               {ad.colors && ad.colors.length > 0 && (
                 <div>

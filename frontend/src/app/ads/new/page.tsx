@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { scrapeUrl, generateAd } from "@/lib/api";
+import VoicePicker, { type Voice } from "@/components/VoicePicker";
 
 const STEPS = [
   "Scraping website...",
@@ -14,6 +15,7 @@ const STEPS = [
 export default function NewAdPage() {
   const router = useRouter();
   const [url, setUrl] = useState("");
+  const [voice, setVoice] = useState<Voice>("alloy");
   const [step, setStep] = useState(0); // 0 idle, 1-3 active step
   const [error, setError] = useState("");
 
@@ -28,7 +30,7 @@ export default function NewAdPage() {
       const scraped = await scrapeUrl(url);
 
       setStep(2);
-      const result = await generateAd({ ...scraped, url });
+      const result = await generateAd({ ...scraped, url, voice });
 
       setStep(3);
       // brief pause so users see the final step
@@ -85,6 +87,8 @@ export default function NewAdPage() {
                 />
               </div>
             </div>
+
+            <VoicePicker value={voice} onChange={setVoice} />
 
             {error && (
               <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">

@@ -70,6 +70,7 @@ export async function rerenderAd(
     colors?: string[];
     logo?: string;
     images?: string[];
+    voice?: "alloy" | "nova" | "shimmer";
   }
 ) {
   const res = await authedFetch(`/api/ads/${id}/rerender`, {
@@ -96,6 +97,7 @@ export async function generateAd(scraped: {
   logo: string;
   colors: string[];
   images: string[];
+  voice?: "alloy" | "nova" | "shimmer";
 }) {
   const res = await authedFetch("/api/generate-ad", {
     method: "POST",
