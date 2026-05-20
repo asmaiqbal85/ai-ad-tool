@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getAds } from "@/lib/api";
+import QuotaBadge from "@/components/QuotaBadge";
 
 export default async function Dashboard() {
   const supabase = createClient();
@@ -26,6 +27,9 @@ export default async function Dashboard() {
         <p className="mt-2 text-base text-slate-600">
           {ads.length} {ads.length === 1 ? "ad" : "ads"} generated
         </p>
+        <div className="mt-4">
+          <QuotaBadge />
+        </div>
       </section>
 
       {/* Gallery */}

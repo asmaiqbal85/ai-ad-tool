@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { scrapeUrl, generateAd } from "@/lib/api";
+import { scrapeUrl, generateAd, getBillingMe } from "@/lib/api";
 import VoicePicker, { type Voice } from "@/components/VoicePicker";
+import PaywallModal from "@/components/PaywallModal";
 
 const STEPS = [
   "Scraping website...",
@@ -18,8 +19,29 @@ export default function NewAdPage() {
   const [voice, setVoice] = useState<Voice>("alloy");
   const [step, setStep] = useState(0); // 0 idle, 1-3 active step
   const [error, setError] = useState("");
+  const [paywall, setPaywall] = useState<{
+    open: boolean;
+    used: number;
+    limit: number;
+  }>({ open: false, used: 0, limit: 3 });
 
   const loading = step > 0;
+
+  useEffect(() => {
+    getBillingMe()
+      .then((info) => {
+        if (info.plan === "free" && info.ads_used >= info.free_limit) {
+          setPaywall({
+            open: true,
+            used: info.ads_used,
+            limit: info.free_limit,
+          });
+        }
+      })
+      .catch(() => {
+        // ignore — backend will still gate at submit time
+      });
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -37,7 +59,19 @@ export default function NewAdPage() {
       await new Promise((r) => setTimeout(r, 700));
 
       router.push(`/ads/${result.id}/edit`);
-    } catch {
+    } catch (e) {
+      // Defensive: if quota was exhausted between mount and submit
+      // (multi-tab race), surface the paywall instead of a generic error.
+      const info = await getBillingMe().catch(() => null);
+      if (info && info.plan === "free" && info.ads_used >= info.free_limit) {
+        setPaywall({
+          open: true,
+          used: info.ads_used,
+          limit: info.free_limit,
+        });
+        setStep(0);
+        return;
+      }
       setError("Failed to generate ad. Check the URL and try again.");
       setStep(0);
     }
@@ -45,6 +79,11 @@ export default function NewAdPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
+      <PaywallModal
+        open={paywall.open}
+        used={paywall.used}
+        limit={paywall.limit}
+      />
       {/* Header */}
       <div className="mb-8 text-center">
         <Link
