@@ -43,8 +43,9 @@ orchestration layer using OpenAI Agents SDK.
 - URL → AI video ad generation working ✅
 - Ad editor with re-render ✅
 - Professional landing page live ✅
-- Signup/Login UI completed ✅
-- Founder onboarding + SQL backfill (NEXT)
+- User authentication + tenant isolation ✅
+- Founder onboarding + SQL backfill ✅
+- Multi-template + voiceover (NEXT)
 - Meta Ads API integration
 - Payment system integration
 - Agent orchestration architecture
