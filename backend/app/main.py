@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 load_dotenv()
 
 from app.api.ads import router as ads_router
+from app.api.billing import router as billing_router
 from app.api.scrape import router as scrape_router
 from app.api.generate import router as generate_router
 
@@ -23,6 +24,7 @@ app.add_middleware(
 )
 
 app.include_router(ads_router, prefix="/api/ads", tags=["ads"])
+app.include_router(billing_router, prefix="/api/billing", tags=["billing"])
 app.include_router(scrape_router, prefix="/api/scrape", tags=["scrape"])
 app.include_router(generate_router, prefix="/api/generate-ad", tags=["generate"])
 
