@@ -7,6 +7,7 @@ from app.schemas.generate import GenerateAdRequest, GenerateAdResponse
 from app.services.auth import get_current_user
 from app.services.copywriter import generate_ad_copy
 from app.services.creatomate import create_video_ad
+from app.services.quota import assert_can_create_ad
 from app.services.storage import upload_voiceover
 from app.services.supabase import get_supabase
 from app.services.tts import synthesize
@@ -16,6 +17,10 @@ router = APIRouter()
 
 @router.post("", response_model=GenerateAdResponse)
 async def generate_ad(payload: GenerateAdRequest, user=Depends(get_current_user)):
+    # Gate first so we don't burn OpenAI + Creatomate credits on a request
+    # that's going to be paywalled at the end anyway.
+    await assert_can_create_ad(user)
+
     # Step 1: Generate headline + ad copy via OpenAI
     try:
         copy = await generate_ad_copy(payload.model_dump())
