@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import LogoutButton from "@/components/LogoutButton";
+import NavBillingLinks from "@/components/NavBillingLinks";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -43,6 +44,7 @@ export default async function RootLayout({
                 >
                   Dashboard
                 </Link>
+                <NavBillingLinks />
                 <span className="hidden text-slate-400 sm:inline">
                   {user.email}
                 </span>
@@ -50,6 +52,12 @@ export default async function RootLayout({
               </>
             ) : (
               <>
+                <Link
+                  href="/pricing"
+                  className="text-slate-600 hover:text-slate-900"
+                >
+                  Pricing
+                </Link>
                 <Link
                   href="/auth/login"
                   className="text-slate-600 hover:text-slate-900"

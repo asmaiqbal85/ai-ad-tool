@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-const PROTECTED_PREFIXES = ["/dashboard", "/ads"];
+const PROTECTED_PREFIXES = ["/dashboard", "/ads", "/billing"];
 const AUTH_PREFIX = "/auth/";
 const AUTH_CALLBACK_PATH = "/auth/callback";
 
