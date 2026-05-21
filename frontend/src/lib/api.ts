@@ -8,6 +8,11 @@ if (!API_URL) {
   );
 }
 
+// Refresh the JWT if it's expired or about to expire in the next 60 seconds.
+// Without this guard, a user sitting on a page for >1h sends a stale token
+// and the backend correctly rejects it with 401 "Invalid or expired token".
+const REFRESH_BEFORE_EXPIRY_SECONDS = 60;
+
 async function resolveToken(explicitToken?: string): Promise<string> {
   if (explicitToken) return explicitToken;
   const supabase = createClient();
@@ -17,6 +22,17 @@ async function resolveToken(explicitToken?: string): Promise<string> {
   if (!session?.access_token) {
     throw new Error("Not signed in");
   }
+
+  const now = Math.floor(Date.now() / 1000);
+  const expiresAt = session.expires_at ?? 0;
+  if (expiresAt - now < REFRESH_BEFORE_EXPIRY_SECONDS) {
+    const { data, error } = await supabase.auth.refreshSession();
+    if (error || !data.session?.access_token) {
+      throw new Error("Session expired — please sign in again");
+    }
+    return data.session.access_token;
+  }
+
   return session.access_token;
 }
 
