@@ -26,15 +26,20 @@ class AdRerenderRequest(BaseModel):
     voice: Literal["alloy", "nova", "shimmer"] = "alloy"
 
 
+AdStatus = Literal["pending", "processing", "succeeded", "failed"]
+
+
 class AdResponse(BaseModel):
     id: str
     url: str
-    headline: str
-    ad_copy: str
-    video_url: str | None
+    headline: str | None = None
+    ad_copy: str | None = None
+    video_url: str | None = None
     colors: list[str] = []
     logo: str = ""
     images: list[str] = []
     template_id: str | None = None
     voiceover_url: str | None = None
+    status: AdStatus = "succeeded"
+    error: str | None = None
     created_at: datetime

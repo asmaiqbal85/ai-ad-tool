@@ -13,9 +13,13 @@ class GenerateAdRequest(BaseModel):
     voice: Literal["alloy", "nova", "shimmer"] = "alloy"
 
 
+AdStatus = Literal["pending", "processing", "succeeded", "failed"]
+
+
 class GenerateAdResponse(BaseModel):
+    """Ack for POST /api/generate-ad. The actual render happens in the
+    background; the frontend polls GET /api/ads/{id} until status is
+    'succeeded' or 'failed'."""
+
     id: str
-    url: str
-    video_url: str
-    headline: str
-    ad_copy: str
+    status: AdStatus
