@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { scrapeUrl, generateAd, rerenderAd } from "@/lib/api";
+import { scrapeUrl, generateAd, pollAdUntilFinal, rerenderAd } from "@/lib/api";
 
 interface AdData {
   id: string;
@@ -33,19 +33,23 @@ export default function EditorPage() {
       const scraped = await scrapeUrl(url);
 
       setLoading("Generating ad...");
-      const result = await generateAd({ ...scraped, url });
+      const { id } = await generateAd({ ...scraped, url });
+
+      setLoading("Rendering video... (this can take ~1 minute)");
+      const ready = await pollAdUntilFinal(id);
 
       setAd({
-        id: result.id,
-        video_url: result.video_url,
-        headline: result.headline,
-        ad_copy: result.ad_copy,
+        id: ready.id,
+        video_url: ready.video_url ?? "",
+        headline: ready.headline ?? "",
+        ad_copy: ready.ad_copy ?? "",
         colors: scraped.colors.length ? scraped.colors : ["#1a73e8"],
         logo: scraped.logo,
         images: scraped.images,
       });
-    } catch {
-      setError("Something went wrong. Check the URL and try again.");
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "";
+      setError(msg || "Something went wrong. Check the URL and try again.");
     } finally {
       setLoading("");
     }

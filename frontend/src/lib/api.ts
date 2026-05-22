@@ -60,10 +60,50 @@ export async function getAds(accessToken?: string) {
   return res.json();
 }
 
-export async function getAd(id: string) {
+export type AdStatus = "pending" | "processing" | "succeeded" | "failed";
+
+export interface Ad {
+  id: string;
+  url: string;
+  headline: string | null;
+  ad_copy: string | null;
+  video_url: string | null;
+  colors: string[];
+  logo: string;
+  images: string[];
+  template_id: string | null;
+  voiceover_url: string | null;
+  status: AdStatus;
+  error: string | null;
+  created_at: string;
+}
+
+export async function getAd(id: string): Promise<Ad> {
   const res = await authedFetch(`/api/ads/${id}`, { cache: "no-store" });
   if (!res.ok) throw new Error("Failed to fetch ad");
-  return res.json();
+  return res.json() as Promise<Ad>;
+}
+
+// Poll an ad row until rendering finishes. Throws on `failed` (with the
+// backend's error message) and on timeout. Default 5 min covers a slow
+// Creatomate queue; the typical render finishes in well under 1 min.
+export async function pollAdUntilFinal(
+  id: string,
+  options: { intervalMs?: number; timeoutMs?: number } = {}
+): Promise<Ad> {
+  const intervalMs = options.intervalMs ?? 3000;
+  const timeoutMs = options.timeoutMs ?? 5 * 60 * 1000;
+  const deadline = Date.now() + timeoutMs;
+
+  while (Date.now() < deadline) {
+    const ad = await getAd(id);
+    if (ad.status === "succeeded") return ad;
+    if (ad.status === "failed") {
+      throw new Error(ad.error || "Ad generation failed");
+    }
+    await new Promise((r) => setTimeout(r, intervalMs));
+  }
+  throw new Error("Ad generation timed out");
 }
 
 export async function updateAd(
@@ -139,11 +179,11 @@ export async function generateAd(scraped: {
   colors: string[];
   images: string[];
   voice?: "alloy" | "nova" | "shimmer";
-}) {
+}): Promise<{ id: string; status: AdStatus }> {
   const res = await authedFetch("/api/generate-ad", {
     method: "POST",
     body: JSON.stringify(scraped),
   });
   if (!res.ok) throw new Error("Failed to generate ad");
-  return res.json();
+  return res.json() as Promise<{ id: string; status: AdStatus }>;
 }

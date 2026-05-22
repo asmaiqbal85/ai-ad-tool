@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { scrapeUrl, generateAd, getBillingMe } from "@/lib/api";
+import { scrapeUrl, generateAd, pollAdUntilFinal, getBillingMe } from "@/lib/api";
 import VoicePicker, { type Voice } from "@/components/VoicePicker";
 import PaywallModal from "@/components/PaywallModal";
 
@@ -52,13 +52,12 @@ export default function NewAdPage() {
       const scraped = await scrapeUrl(url);
 
       setStep(2);
-      const result = await generateAd({ ...scraped, url, voice });
+      const { id } = await generateAd({ ...scraped, url, voice });
 
       setStep(3);
-      // brief pause so users see the final step
-      await new Promise((r) => setTimeout(r, 700));
+      await pollAdUntilFinal(id);
 
-      router.push(`/ads/${result.id}/edit`);
+      router.push(`/ads/${id}/edit`);
     } catch (e) {
       // Defensive: if quota was exhausted between mount and submit
       // (multi-tab race), surface the paywall instead of a generic error.
@@ -72,7 +71,15 @@ export default function NewAdPage() {
         setStep(0);
         return;
       }
-      setError("Failed to generate ad. Check the URL and try again.");
+      const msg = e instanceof Error ? e.message : "";
+      setError(
+        msg.startsWith("AI generation failed") ||
+          msg.startsWith("Voiceover generation failed") ||
+          msg.startsWith("Video rendering failed") ||
+          msg.startsWith("Failed to save ad")
+          ? msg
+          : "Failed to generate ad. Check the URL and try again."
+      );
       setStep(0);
     }
   }
